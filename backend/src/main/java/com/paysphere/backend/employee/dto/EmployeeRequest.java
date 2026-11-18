@@ -31,6 +31,9 @@ public record EmployeeRequest(
         @Size(max = 30)
         String phone,
 
+        @Size(max = 2)
+        String countryCode,
+
         @NotBlank(message = "Designation is required")
         @Size(max = 100)
         String designation,

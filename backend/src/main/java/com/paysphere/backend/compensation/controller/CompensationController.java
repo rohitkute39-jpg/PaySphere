@@ -44,4 +44,10 @@ public class CompensationController {
 
         return compensationService.getCurrentSalary(employeeId);
     }
+
+    @GetMapping("/current")
+    public List<CompensationResponse> getAllCurrentSalaries() {
+
+        return compensationService.getAllCurrentSalaries();
+    }
 }

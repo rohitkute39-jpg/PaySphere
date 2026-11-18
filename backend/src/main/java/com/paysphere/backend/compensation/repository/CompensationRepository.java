@@ -1,3 +1,4 @@
+
 package com.paysphere.backend.compensation.repository;
 
 import com.paysphere.backend.compensation.entity.CompensationRecord;
@@ -15,4 +16,6 @@ public interface CompensationRepository extends JpaRepository<CompensationRecord
     );
 
     List<CompensationRecord> findByCurrencyCode(String currencyCode);
+
+    List<CompensationRecord> findByEffectiveToIsNull();
 }

@@ -18,6 +18,7 @@ public final class EmployeeMapper {
         employee.setLastName(request.lastName().trim());
         employee.setEmail(request.email().trim().toLowerCase());
         employee.setPhone(request.phone());
+        employee.setCountryCode(request.countryCode());
         employee.setDesignation(request.designation().trim());
         employee.setDepartment(department);
         employee.setDateOfJoining(request.dateOfJoining());
@@ -40,6 +41,7 @@ public final class EmployeeMapper {
                 employee.getLastName(),
                 employee.getEmail(),
                 employee.getPhone(),
+                employee.getCountryCode(),
                 employee.getDesignation(),
                 employee.getDepartment().getId(),
                 employee.getDepartment().getName(),

@@ -50,6 +50,48 @@ public class EmployeeService {
         return EmployeeMapper.toResponse(employeeRepository.save(employee));
     }
 
+    public EmployeeResponse updateEmployee(Long id, EmployeeRequest request) {
+
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Employee not found with ID: " + id
+                ));
+
+        String employeeNumber = request.employeeNumber().trim();
+        String email = request.email().trim();
+
+        if (!employee.getEmployeeNumber().equalsIgnoreCase(employeeNumber)
+                && employeeRepository.existsByEmployeeNumber(employeeNumber)) {
+            throw new IllegalArgumentException("Employee number already exists");
+        }
+
+        if (!employee.getEmail().equalsIgnoreCase(email)
+                && employeeRepository.existsByEmailIgnoreCase(email)) {
+            throw new IllegalArgumentException("Employee email already exists");
+        }
+
+        var department = departmentRepository.findById(request.departmentId())
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Department not found"));
+
+        employee.setEmployeeNumber(employeeNumber);
+        employee.setFirstName(request.firstName().trim());
+        employee.setLastName(request.lastName().trim());
+        employee.setEmail(email);
+        employee.setPhone(request.phone());
+        employee.setCountryCode(request.countryCode());
+        employee.setDesignation(request.designation().trim());
+        employee.setDepartment(department);
+        employee.setDateOfJoining(request.dateOfJoining());
+        employee.setStatus(
+                request.status() != null
+                        ? request.status()
+                        : EmployeeStatus.ACTIVE
+        );
+
+        return EmployeeMapper.toResponse(employeeRepository.save(employee));
+    }
+
     @Transactional(readOnly = true)
     public EmployeeResponse getEmployeeById(Long id) {
 

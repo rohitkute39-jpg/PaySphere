@@ -37,6 +37,9 @@ public class Employee {
     @Column(length = 30)
     private String phone;
 
+    @Column(name = "country_code", length = 2)
+    private String countryCode;
+
     @Column(nullable = false, length = 100)
     private String designation;
 
@@ -82,6 +85,10 @@ public class Employee {
     public void setEmail(String email) { this.email = email; }
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
+public String getCountryCode() { return countryCode; }
+public void setCountryCode(String countryCode) {
+    this.countryCode = countryCode;
+}
     public String getDesignation() { return designation; }
     public void setDesignation(String designation) { this.designation = designation; }
     public Department getDepartment() { return department; }

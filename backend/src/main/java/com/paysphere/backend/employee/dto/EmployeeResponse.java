@@ -11,6 +11,7 @@ public record EmployeeResponse(
         String lastName,
         String email,
         String phone,
+        String countryCode,
         String designation,
         Long departmentId,
         String departmentName,

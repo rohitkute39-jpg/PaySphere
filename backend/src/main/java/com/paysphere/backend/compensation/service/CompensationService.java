@@ -11,7 +11,6 @@ import com.paysphere.backend.employee.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -95,5 +94,14 @@ public class CompensationService {
                         new IllegalArgumentException("Current salary record not found"));
 
         return CompensationMapper.toResponse(record);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CompensationResponse> getAllCurrentSalaries() {
+
+        return compensationRepository.findByEffectiveToIsNull()
+                .stream()
+                .map(CompensationMapper::toResponse)
+                .toList();
     }
 }
