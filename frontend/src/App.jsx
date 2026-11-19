@@ -16,17 +16,17 @@ const API_BASE_URL = 'http://localhost:8080/api/v1'
 
 const navigationItems = [
 
-  { id: 'dashboard', label: 'Dashboard', icon: 'â–¦' },
+  { id: 'dashboard', label: 'Dashboard', icon: '\u25A6' },
 
-  { id: 'employees', label: 'Employees', icon: 'â™™' },
+  { id: 'employees', label: 'Employees', icon: '\u265F' },
 
-  { id: 'departments', label: 'Departments', icon: 'â–¤' },
+  { id: 'departments', label: 'Departments', icon: '\u25A4' },
 
-  { id: 'compensation', label: 'Compensation', icon: 'â‚¹' },
+  { id: 'compensation', label: 'Compensation', icon: '\u20B9' },
 
-  { id: 'payroll', label: 'Payroll', icon: 'â–£' },
+  { id: 'payroll', label: 'Payroll', icon: '\u25A3' },
 
-  { id: 'reports', label: 'Reports', icon: 'â–¥' },
+  { id: 'reports', label: 'Reports', icon: '\u25A5' },
 
 ]
 
@@ -220,11 +220,11 @@ function App() {
 
   USD: '$',
 
-  GBP: '£',
+  GBP: 'Ã‚Â£',
 
   CAD: 'CA$',
 
-  EUR: '€',
+  EUR: 'Ã¢â€šÂ¬',
 
   AUD: 'A$',
 
@@ -1930,7 +1930,7 @@ const closeEmployeeForm = () => {
 
           >
 
-            â†ª Sign Out
+            {'\u21AA'} Sign Out
 
           </button>
 
@@ -2068,7 +2068,7 @@ const closeEmployeeForm = () => {
 
                   <span className="stat-label">DEPARTMENTS</span>
 
-                  <h2>{departments.length || 'â€”'}</h2>
+                  <h2>{departments.length || '\u2014'}</h2>
 
                   <span className="stat-description">Available departments</span>
 
@@ -2080,7 +2080,7 @@ const closeEmployeeForm = () => {
 
                   <span className="stat-label">PAYROLL STATUS</span>
 
-                  <h2>â€”</h2>
+                  <h2>{'\u2014'}</h2>
 
                   <span className="stat-description">Current payroll cycle</span>
 
@@ -2782,11 +2782,11 @@ const closeEmployeeForm = () => {
 
       <option value="USD">USD ($)</option>
 
-      <option value="GBP">GBP (£)</option>
+      <option value="GBP">GBP (Ã‚Â£)</option>
 
       <option value="CAD">CAD (CA$)</option>
 
-      <option value="EUR">EUR (€)</option>
+      <option value="EUR">EUR (Ã¢â€šÂ¬)</option>
 
       <option value="AUD">AUD (A$)</option>
 
@@ -2948,7 +2948,7 @@ const closeEmployeeForm = () => {
 
           <footer className="footer">
 
-            <span>Â© 2026 PaySphere. All rights reserved.</span>
+            <span>{'\u00A9'} 2026 PaySphere. All rights reserved.</span>
 
             <span>Employee & Payroll Management System</span>
 
