@@ -21,15 +21,23 @@ PaySphere is a web application designed to help HR teams manage employee informa
 - JavaScript
 - HTML and CSS
 
+### Testing
+- JUnit and Mockito
+- Vitest
+- React Testing Library
+
 ## Main Features
 
 - Secure login with JWT authentication.
 - Role-based access control for ADMIN, HR_MANAGER, and HR_STAFF.
-- Employee management with search, filtering, and pagination.
+- Employee creation, viewing, and updating.
+- Employee listing with pagination, sorting, status filtering, department filtering, and name search.
+- Department management.
 - Compensation records and salary revision history.
 - Salary revision access restricted to ADMIN and HR_MANAGER.
-- Input validation and centralized backend security.
+- Input validation and centralized backend exception handling.
 - Database-backed employee and compensation management.
+- Optional sample-data generation with a configurable target of 10,000 employees.
 
 ## Prerequisites
 
@@ -94,6 +102,26 @@ The administrator initializer creates an initial administrator when valid config
 
 Do not commit passwords, JWT secrets, or other credentials to Git.
 
+## Optional Employee Sample Data
+
+The application includes an employee data seeder that can generate employee and initial compensation records.
+
+Configure these application properties to enable it:
+
+```properties
+app.seed.employees.enabled=true
+app.seed.employees.target-count=10000
+```
+
+The seeder:
+- Is disabled by default.
+- Requires active departments to exist.
+- Generates records in batches of 500.
+- Checks existing employee numbers and email addresses to avoid duplicates.
+- Creates an initial compensation record for each generated employee.
+
+The configured target is a sample-data generation capability, not a guarantee of production performance at that scale.
+
 ## Run the Backend
 
 Open a terminal:
@@ -125,6 +153,8 @@ npm install
 npm run dev
 ```
 
+On Windows PowerShell, use `npm.cmd` instead of `npm` if script execution policy blocks `npm.ps1`.
+
 Open the Vite URL printed in the terminal, normally:
 
 `http://localhost:5173`
@@ -149,38 +179,61 @@ cd backend
 
 ## Automated Tests
 
-Run backend tests from the `backend` directory:
+### Backend
+
+Run from the `backend` directory:
 
 ```powershell
 .\mvnw.cmd test
 ```
 
-A working MySQL connection and the required environment variables must be configured before running the Spring application-context tests.
+The current backend test suite includes a Spring application-context loading test. A working MySQL connection and the required environment configuration are needed.
+
+### Frontend
+
+Run from the `frontend` directory:
+
+```powershell
+npm run test
+```
+
+On Windows PowerShell, use `npm.cmd run test` if needed.
+
+The current frontend test suite covers login behavior and compensation component behavior using mocked API responses.
 
 ## Project Structure
 
 ```text
 PaySphere/
-├── backend/
-│   ├── src/main/java/com/paysphere/backend/
-│   │   ├── compensation/
-│   │   ├── employee/
-│   │   ├── security/
-│   │   └── seed/
-│   └── pom.xml
-├── frontend/
-│   ├── src/
-│   ├── package.json
-│   └── vite.config.js
-├── REQUIREMENTS.md
-└── README.md
+|-- backend/
+|   |-- src/main/java/com/paysphere/backend/
+|   |   |-- compensation/
+|   |   |-- department/
+|   |   |-- employee/
+|   |   |-- security/
+|   |   |-- seed/
+|   |-- src/test/
+|   |-- pom.xml
+|-- frontend/
+|   |-- src/
+|   |   |-- test/
+|   |   |-- Login.test.jsx
+|   |   |-- Compensation.test.jsx
+|   |-- package.json
+|   |-- vite.config.js
+|-- docs/
+|   |-- ARCHITECTURE.md
+|   |-- DATABASE_DESIGN.md
+|-- REQUIREMENTS.md
+|-- README.md
 ```
 
 ## Scope
 
-PaySphere focuses on employee information and compensation management.
+PaySphere focuses on employee information, department management, authentication, and compensation management.
 
 Payroll disbursement, tax filing, attendance, recruitment, employee self-service, AI-based salary recommendations, and microservices are outside the current assessment scope.
 
 ## Author
+
 Rohit Kute

@@ -1,99 +1,143 @@
-# PaySphere — Architecture Design
+# PaySphere - Architecture Design
 
 ## 1. Architecture Overview
 
-PaySphere will use a modular monolithic architecture with a React frontend, a Spring Boot REST API and a MySQL relational database.
+PaySphere follows a modular monolithic architecture consisting of:
 
-The application will be deployed as one backend service and one frontend application. Business responsibilities will be separated into modules to maintain clarity, testability and future extensibility.
+- React frontend application.
+- Spring Boot REST API.
+- MySQL relational database.
+
+The backend is deployed as one application, with responsibilities separated into employee, department, compensation, and security modules.
+
+This architecture keeps deployment simple while maintaining separation of business responsibilities.
 
 ## 2. Technology Choices
 
-- Java 21 — LTS runtime.
-- Spring Boot — backend application and REST APIs.
-- Spring Data JPA and Hibernate — persistence.
-- Spring Security and JWT — authentication and authorization.
-- MySQL 8 — relational database.
-- React — user interface.
-- Material UI — reusable UI components.
-- JUnit 5 and Mockito — backend testing.
-- Vitest and React Testing Library — frontend testing.
-- Maven Wrapper and npm — build tools.
+### Backend
+- Java 21
+- Spring Boot
+- Spring MVC and REST APIs
+- Spring Data JPA and Hibernate
+- Spring Security and JWT authentication
+- MySQL 8
+- Maven
+
+### Frontend
+- React 19
+- Vite
+- JavaScript
+- CSS
+
+### Testing
+- JUnit and Mockito
+- Vitest
+- React Testing Library
 
 ## 3. Backend Modules
 
 ### Employee Module
-Responsible for employee profiles, departments, designations, countries, employee status and employee search.
+Manages employee profiles, including employee number, name, email, phone, country code, designation, department, joining date, and employment status.
+
+Provides employee creation, retrieval, updating, and listing operations.
+
+### Department Module
+Manages department master data, including department code, name, description, and active status.
+
+Provides department creation and retrieval operations.
 
 ### Compensation Module
-Responsible for salary records, compensation updates, allowances, bonuses, currencies and salary revision history.
+Manages annual salary records, currency codes, effective dates, and revision reasons.
 
-### Analytics Module
-Responsible for dashboard metrics, department-wise summaries, country-wise summaries and compensation reports.
+When a new compensation record is created, the previous current record is closed by setting its effective end date. The new record becomes the current compensation record.
 
 ### Security Module
-Responsible for HR Manager authentication, JWT validation and access control.
-
-### Reporting Module
-Responsible for filtered report generation and CSV/Excel exports.
+Provides administrator initialization, authentication, password hashing, JWT-based authentication, and role-based authorization.
 
 ## 4. Database Design
 
-The initial relational model will contain:
+The application uses four primary relational tables:
 
-- `employees` — employee profile and employment information.
-- `departments` — department master data.
-- `countries` — country master data.
-- `compensation_records` — salary and compensation details with effective dates.
-- `users` — HR Manager login and authorization information.
-- `salary_audit_logs` — salary change history, including previous and new values.
+- `employees` - Employee profile and employment information.
+- `departments` - Department master data.
+- `compensation_records` - Annual salary records and compensation history.
+- `app_users` - Application user credentials and roles.
 
-Salary amounts will use decimal precision rather than floating-point values. Every compensation record will retain its ISO currency code. Different currencies will not be added together or compared as if they were the same currency without an explicit exchange-rate policy.
+Employees reference departments through a foreign key. Compensation records reference employees.
+
+Employee country information is stored using a country code rather than a separate country master table.
+
+Salary values use `DECIMAL(19,2)` and retain a three-character currency code. Different currencies must not be treated as directly comparable without an exchange-rate policy.
+
+Compensation history is maintained through effective dates in `compensation_records`. The current implementation does not use a separate salary audit-log table or Hibernate Envers.
 
 ## 5. API Design
 
-The backend will expose REST endpoints for:
+The backend exposes the following REST endpoints:
 
-- Authentication.
-- Employee creation, retrieval, update and deactivation.
-- Employee search, filtering, sorting and pagination.
-- Compensation creation and revision.
-- Dashboard analytics.
-- Salary reports and exports.
+### Authentication
+- `POST /api/v1/auth/login`
 
-API responses will use consistent structures, validation and centralized exception handling.
+### Employees
+- `POST /api/v1/employees`
+- `PUT /api/v1/employees/{id}`
+- `GET /api/v1/employees/{id}`
+- `GET /api/v1/employees`
+
+### Departments
+- `POST /api/v1/departments`
+- `GET /api/v1/departments`
+- `GET /api/v1/departments/{id}`
+
+### Compensation
+- `POST /api/v1/compensation/employees/{employeeId}`
+- `GET /api/v1/compensation/employees/{employeeId}/history`
+- `GET /api/v1/compensation/employees/{employeeId}/current`
+- `GET /api/v1/compensation/current`
+
+The API uses request validation, DTOs, and centralized exception handling.
 
 ## 6. Performance and Scalability
 
-The initial target is 10,000 employee records.
+The assessment dataset target is 10,000 employees.
 
-The implementation will use:
+The implementation includes:
+- Database indexes on employee number, department, status, employee name, and compensation lookup fields.
+- Batch employee seeding with a configurable target count.
+- Batch size of 500 for generated employee and initial compensation records.
+- Pagination support where implemented by the employee listing API.
+- Transactional compensation updates.
 
-- Database pagination rather than loading all employees at once.
-- Indexes on frequently searched and filtered fields.
-- Optimized aggregation queries for dashboard metrics.
-- Appropriate transaction boundaries for salary updates.
-- DTO projections to avoid unnecessary entity loading.
-- Deterministic seed data for repeatable performance testing.
+The employee seeder is disabled by default and can be enabled through application configuration.
+
+The 10,000-employee target is a data-generation capability; production performance at that scale requires separate load testing.
 
 ## 7. Security and Data Integrity
 
-- Restrict salary information to authenticated and authorized HR users.
-- Store password hashes rather than plaintext passwords.
-- Validate all incoming data.
-- Use database transactions for compensation changes and audit logging.
-- Avoid exposing sensitive fields in unnecessary API responses.
+- Passwords are stored as hashes using Spring Security's password encoder.
+- JWT authentication protects authenticated API operations.
+- Role-based authorization controls access to protected functionality.
+- Environment variables are used for administrator credentials and database secrets.
+- Request DTOs and validation protect incoming data.
+- Compensation changes run within database transactions.
+- Employee and compensation responses use DTOs instead of directly exposing persistence entities.
 
 ## 8. Architectural Trade-off
 
-A modular monolith is preferred over microservices for this assessment because the application has a focused business domain and a single primary user type.
+A modular monolith is appropriate for this assessment because the application has a focused business domain and a limited set of user roles.
 
-This reduces deployment and infrastructure complexity while retaining clear module boundaries. If the product grows, individual modules can be extracted into services when independent scaling or deployment becomes a demonstrated need.
+It reduces deployment and infrastructure complexity while retaining clear module boundaries.
 
-## 9. Initial Deployment Model
+If the product grows, modules can be extracted into independent services when independent deployment or scaling becomes necessary.
+
+## 9. Deployment Model
+
+The application consists of:
 
 - React frontend application.
-- One Spring Boot backend service.
-- One MySQL database.
-- Environment-based configuration for secrets and connection settings.
+- Spring Boot backend service.
+- MySQL database.
 
-The final deployment will use environment variables for credentials and production configuration.
+The backend uses environment-based configuration for database credentials, JWT secrets, and administrator initialization.
+
+The frontend and backend can be built independently using npm and the Maven Wrapper.
