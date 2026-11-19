@@ -215,23 +215,14 @@ function App() {
   const [selectedSalaryCurrency, setSelectedSalaryCurrency] = useState('INR')
 
   const currencySymbols = {
-
-  INR: '?',
-
+  INR: '\u20B9',
   USD: '$',
-
-  GBP: 'Ã‚Â£',
-
+  GBP: '\u00A3',
   CAD: 'CA$',
-
-  EUR: 'Ã¢â€šÂ¬',
-
+  EUR: '\u20AC',
   AUD: 'A$',
-
   SGD: 'S$',
-
   AED: 'AED ',
-
 }
 
   const [salaryLoading, setSalaryLoading] = useState(false)
